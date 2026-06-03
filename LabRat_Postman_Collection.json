@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "LabRat API",
+    "description": "Collection for LabRat Quiz Generation API - User Management Endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\",\n  \"email\": \"test@example.com\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", "register"]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    var jsonData = pm.response.json();",
+              "    pm.environment.set('token', jsonData.data);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", "login"]
+        }
+      }
+    },
+    {
+      "name": "Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId"],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update User",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"Name\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId"],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Password",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId/update-password?newPassword=newpassword123",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId", "update-password"],
+          "query": [
+            {
+              "key": "newPassword",
+              "value": "newpassword123"
+            }
+          ],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Username",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId/update-username?newUsername=newusername",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId", "update-username"],
+          "query": [
+            {
+              "key": "newUsername",
+              "value": "newusername"
+            }
+          ],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Add Privilege to User",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId/privileges/:privilegeId/add",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId", "privileges", ":privilegeId", "add"],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            },
+            {
+              "key": "privilegeId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Remove Privilege from User",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId/privileges/:privilegeId/remove",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId", "privileges", ":privilegeId", "remove"],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            },
+            {
+              "key": "privilegeId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete User",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/starter/api/users/:userId",
+          "host": ["{{baseUrl}}"],
+          "path": ["starter", "api", "users", ":userId"],
+          "variable": [
+            {
+              "key": "userId",
+              "value": "uuid-here"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
