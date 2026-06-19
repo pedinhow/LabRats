@@ -58,17 +58,21 @@ Gerencia as configurações e integrações externas, incluindo:
     cd labrat
 ```
 
-### **2. Configurar o Banco de Dados**
-Atualize o arquivo `application.properties` (ou `application.yml`) com as credenciais do banco de dados:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/labrat_db
-spring.datasource.username=usuario
-spring.datasource.password=senha
+### **2. Configurar variaveis de ambiente**
+Use variaveis de ambiente para credenciais e tokens. Veja `.env.example` para a lista completa.
+
+No PowerShell:
+```powershell
+$env:DB_URL="jdbc:postgresql://localhost:5432/lab_rat"
+$env:DB_USERNAME="postgres"
+$env:DB_PASSWORD="sua-senha-local"
+$env:JWT_SECRET="um-segredo-longo-e-aleatorio"
+$env:OPENROUTER_API_KEY="sua-chave-openrouter"
 ```
 
 ### **3. Executar o projeto**
-```bash
-./mvnw spring-boot:run
+```powershell
+mvn spring-boot:run "-Dspring-boot.run.arguments=--spring.profiles.active=dev"
 ```
 Ou, caso esteja usando Docker Compose:
 ```bash
