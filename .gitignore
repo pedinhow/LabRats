@@ -1,11 +1,14 @@
-# IntelliJ IDEA
 .idea/
 *.iml
 
-# Maven
 target/
 
-# Arquivos locais e temporários
+.env
+*.env
+
+src/main/resources/application-local.properties
+src/main/resources/application-*.local.properties
+
 *.log
 *.mp3
-.env
+*.wav
