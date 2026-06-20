@@ -1,0 +1,11 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Arquivos locais e temporários
+*.log
+*.mp3
+.env
