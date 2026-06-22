@@ -1,6 +1,12 @@
 package br.com.starter.application.api.quiz;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.starter.application.api.common.ResponseDTO;
 import br.com.starter.application.api.quiz.dto.GenerateQuizRequestDTO;
+import br.com.starter.application.api.quiz.dto.GenerateQuizResponseDTO;
 import br.com.starter.application.api.quiz.dto.QuizResponseDTO;
+import br.com.starter.domain.quiz.Quiz;
 import br.com.starter.domain.quiz.QuizService;
+import br.com.starter.domain.user.CustomUserDetails;
 
 @RestController
 @RequestMapping("/quizzes")
@@ -21,11 +30,35 @@ public class QuizController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<?> generate(@RequestBody GenerateQuizRequestDTO request) {
-        return ResponseEntity.ok(
-                new ResponseDTO<>(
-                        QuizResponseDTO.fromQuiz(quizService.generate(request == null ? null : request.baseText()))
-                )
+    public ResponseEntity<ResponseDTO<GenerateQuizResponseDTO>> generate(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody GenerateQuizRequestDTO request
+    ) {
+        Quiz quiz = quizService.generate(
+                request == null ? null : request.baseText(),
+                userDetails.getUser()
         );
+
+        return ResponseEntity.ok(new ResponseDTO<>(new GenerateQuizResponseDTO(quiz.getId())));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ResponseDTO<List<QuizResponseDTO>>> findMine(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<QuizResponseDTO> quizzes = quizService.findAllByCreator(userDetails.getUser()).stream()
+                .map(QuizResponseDTO::fromQuiz)
+                .toList();
+
+        return ResponseEntity.ok(new ResponseDTO<>(quizzes));
+    }
+
+    @GetMapping("/{quizId}")
+    public ResponseEntity<ResponseDTO<QuizResponseDTO>> findById(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID quizId
+    ) {
+        Quiz quiz = quizService.findByIdAndCreator(quizId, userDetails.getUser());
+        return ResponseEntity.ok(new ResponseDTO<>(QuizResponseDTO.fromQuiz(quiz)));
     }
 }
