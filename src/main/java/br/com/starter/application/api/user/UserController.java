@@ -1,6 +1,7 @@
 package br.com.starter.application.api.user;
 
 import br.com.starter.application.api.common.ResponseDTO;
+import br.com.starter.application.api.user.dto.AuthenticatedUserResponse;
 import br.com.starter.application.api.user.dto.AuthRequestDTO;
 import br.com.starter.application.api.user.dto.UpdateUserDTO;
 import br.com.starter.application.api.user.dto.UserRegistrationRequest;
@@ -56,6 +57,17 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody UserRegistrationRequest user) {
         ResponseDTO<?> response = new ResponseDTO<>(userService.create(user));
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ResponseDTO<AuthenticatedUserResponse>> me(
+            @AuthenticationPrincipal CustomUserDetails userAuthentication
+    ) {
+        return ResponseEntity.ok(
+                new ResponseDTO<>(
+                        AuthenticatedUserResponse.fromUser(userAuthentication.getUser())
+                )
+        );
     }
 
     @PatchMapping("/{userId}/update-password")
