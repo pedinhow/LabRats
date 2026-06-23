@@ -13,6 +13,7 @@ public class CorsConfig {
     // Endereços autorizados cors
     protected static final String[] ALLOWED_ORIGINS = {
         "http://localhost:3000",
+        "http://localhost:5173",
     };
 
     @Bean
