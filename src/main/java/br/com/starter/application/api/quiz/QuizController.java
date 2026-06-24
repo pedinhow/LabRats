@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.starter.application.api.common.ResponseDTO;
 import br.com.starter.application.api.quiz.dto.GenerateQuizRequestDTO;
 import br.com.starter.application.api.quiz.dto.GenerateQuizResponseDTO;
+import br.com.starter.application.api.quiz.dto.QuizEditResponseDTO;
 import br.com.starter.application.api.quiz.dto.QuizResponseDTO;
 import br.com.starter.application.api.quiz.dto.UpdateQuizTitleRequestDTO;
 import br.com.starter.domain.quiz.Quiz;
@@ -62,6 +63,15 @@ public class QuizController {
     ) {
         Quiz quiz = quizService.findByIdAndCreator(quizId, userDetails.getUser());
         return ResponseEntity.ok(new ResponseDTO<>(QuizResponseDTO.fromQuiz(quiz)));
+    }
+
+    @GetMapping("/{quizId}/edit")
+    public ResponseEntity<ResponseDTO<QuizEditResponseDTO>> findForEditing(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable UUID quizId
+    ) {
+        Quiz quiz = quizService.findByIdAndCreator(quizId, userDetails.getUser());
+        return ResponseEntity.ok(new ResponseDTO<>(QuizEditResponseDTO.fromQuiz(quiz)));
     }
 
     @PatchMapping("/{quizId}/title")

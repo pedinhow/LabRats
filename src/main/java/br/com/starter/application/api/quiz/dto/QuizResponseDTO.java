@@ -38,12 +38,11 @@ public record QuizResponseDTO(
         }
     }
 
-    public record AlternativeResponseDTO(UUID id, String text, Boolean isCorrect) {
+    public record AlternativeResponseDTO(UUID id, String text) {
         public static AlternativeResponseDTO fromAlternative(Alternative alternative) {
             return new AlternativeResponseDTO(
                     alternative.getId(),
-                    alternative.getText(),
-                    alternative.getIsCorrect()
+                    alternative.getText()
             );
         }
     }
