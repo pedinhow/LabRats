@@ -31,6 +31,9 @@ public class Question {
     @JsonAlias({ "statement", "question", "pergunta", "enunciado" })
     private String statement;
 
+    @Column(name = "duration_seconds", nullable = false)
+    private Integer durationSeconds = 15;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonAlias({ "options", "alternativas" })
     private List<Alternative> alternatives = new ArrayList<>();
@@ -62,6 +65,14 @@ public class Question {
 
     public void setStatement(String statement) {
         this.statement = statement;
+    }
+
+    public Integer getDurationSeconds() {
+        return durationSeconds;
+    }
+
+    public void setDurationSeconds(Integer durationSeconds) {
+        this.durationSeconds = durationSeconds;
     }
 
     public List<Alternative> getAlternatives() {

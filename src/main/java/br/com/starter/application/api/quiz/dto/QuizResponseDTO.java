@@ -26,11 +26,17 @@ public record QuizResponseDTO(
         );
     }
 
-    public record QuestionResponseDTO(UUID id, String statement, List<AlternativeResponseDTO> alternatives) {
+    public record QuestionResponseDTO(
+            UUID id,
+            String statement,
+            Integer durationSeconds,
+            List<AlternativeResponseDTO> alternatives
+    ) {
         public static QuestionResponseDTO fromQuestion(Question question) {
             return new QuestionResponseDTO(
                     question.getId(),
                     question.getStatement(),
+                    question.getDurationSeconds(),
                     question.getAlternatives() == null ? List.of() : question.getAlternatives().stream()
                             .map(AlternativeResponseDTO::fromAlternative)
                             .toList()

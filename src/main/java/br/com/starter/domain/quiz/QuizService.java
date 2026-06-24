@@ -50,6 +50,15 @@ public class QuizService {
     }
 
     @Transactional
+    public Quiz updateQuestions(UUID quizId, List<Question> questions, User creator) {
+        validateQuestions(questions);
+
+        Quiz quiz = findByIdAndCreator(quizId, creator);
+        quiz.setQuestions(questions);
+        return quizRepository.save(quiz);
+    }
+
+    @Transactional
     public List<Quiz> findAllByCreator(User creator) {
         List<Quiz> quizzes = quizRepository.findAllByCreatorIdOrderByCreatedAtDesc(creator.getId());
         quizzes.forEach(this::initializeQuestions);
@@ -66,6 +75,55 @@ public class QuizService {
 
     private void initializeQuestions(Quiz quiz) {
         quiz.getQuestions().forEach(question -> question.getAlternatives().size());
+    }
+
+    private void validateQuestions(List<Question> questions) {
+        if (questions == null || questions.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O quiz deve ter pelo menos uma pergunta.");
+        }
+
+        for (Question question : questions) {
+            if (question == null || question.getStatement() == null || question.getStatement().trim().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O enunciado nao pode ser vazio.");
+            }
+            question.setStatement(question.getStatement().trim());
+
+            if (question.getDurationSeconds() == null || question.getDurationSeconds() < 5) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "A duracao de cada pergunta deve ser de pelo menos cinco segundos."
+                );
+            }
+
+            List<Alternative> alternatives = question.getAlternatives();
+            if (alternatives == null || alternatives.size() < 2) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cada pergunta deve ter pelo menos duas alternativas."
+                );
+            }
+
+            int correctCount = 0;
+            for (Alternative alternative : alternatives) {
+                if (alternative == null || alternative.getText() == null || alternative.getText().trim().isEmpty()) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "O texto da alternativa nao pode ser vazio."
+                    );
+                }
+                alternative.setText(alternative.getText().trim());
+                if (Boolean.TRUE.equals(alternative.getIsCorrect())) {
+                    correctCount++;
+                }
+            }
+
+            if (correctCount != 1) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Cada pergunta deve ter exatamente uma alternativa correta."
+                );
+            }
+        }
     }
 
     private String buildDefaultTitle(String baseText) {
