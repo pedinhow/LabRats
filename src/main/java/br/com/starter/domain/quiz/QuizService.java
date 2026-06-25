@@ -59,6 +59,12 @@ public class QuizService {
     }
 
     @Transactional
+    public void delete(UUID quizId, User creator) {
+        Quiz quiz = findByIdAndCreator(quizId, creator);
+        quizRepository.delete(quiz);
+    }
+
+    @Transactional
     public List<Quiz> findAllByCreator(User creator) {
         List<Quiz> quizzes = quizRepository.findAllByCreatorIdOrderByCreatedAtDesc(creator.getId());
         quizzes.forEach(this::initializeQuestions);
