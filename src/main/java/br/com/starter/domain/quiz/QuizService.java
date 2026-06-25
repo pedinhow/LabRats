@@ -79,6 +79,19 @@ public class QuizService {
         return quiz;
     }
 
+    @Transactional
+    public Quiz saveGeneratedQuiz(Quiz quiz, User creator) {
+        if (quiz == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Quiz gerado invalido.");
+        }
+        if (creator == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario nao autenticado.");
+        }
+
+        quiz.setCreator(creator);
+        return quizRepository.save(quiz);
+    }
+
     private void initializeQuestions(Quiz quiz) {
         quiz.getQuestions().forEach(question -> question.getAlternatives().size());
     }
@@ -139,4 +152,5 @@ public class QuizService {
 
         return titleSuffix.isBlank() ? "Quiz" : "Quiz " + titleSuffix;
     }
+
 }
