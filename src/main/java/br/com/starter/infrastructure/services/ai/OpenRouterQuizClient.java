@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.starter.infrastructure.services.ai.dto.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -24,9 +25,8 @@ import br.com.starter.domain.quiz.Alternative;
 import br.com.starter.domain.quiz.Question;
 import br.com.starter.domain.quiz.Quiz;
 import br.com.starter.domain.quiz.QuizGeneratorClient;
-import br.com.starter.infrastructure.services.ai.dto.OpenRouterMessageDTO;
-import br.com.starter.infrastructure.services.ai.dto.OpenRouterRequestDTO;
-import br.com.starter.infrastructure.services.ai.dto.OpenRouterResponseDTO;
+
+import java.util.Base64;
 
 @Service
 public class OpenRouterQuizClient implements QuizGeneratorClient {
@@ -82,6 +82,42 @@ public class OpenRouterQuizClient implements QuizGeneratorClient {
                 List.of(
                         new OpenRouterMessageDTO("system", SYSTEM_PROMPT),
                         new OpenRouterMessageDTO("user", baseText)
+                )
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            ResponseEntity<OpenRouterResponseDTO> response = restTemplate.postForEntity(
+                    apiUrl,
+                    new HttpEntity<>(request, headers),
+                    OpenRouterResponseDTO.class
+            );
+
+            String generatedContent = extractGeneratedContent(response.getBody());
+            return parseQuiz(generatedContent);
+        } catch (RestClientException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Erro ao chamar a OpenRouter.", exception);
+        }
+    }
+
+
+    @Override
+    public Quiz generateFromPdf(String filename, byte[] pdfBytes, String userMessage) {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Chave da OpenRouter nao configurada.");
+        }
+
+        OpenRouterRequestDTO request = new OpenRouterRequestDTO(
+                MODEL,
+                List.of(
+                        new OpenRouterMessageDTO("system", SYSTEM_PROMPT),
+                        new OpenRouterMultimodalMessageDTO("user", List.of(
+                                OpenRouterContentPartDTO.pdf(filename, pdfBytes),
+                                OpenRouterContentPartDTO.text(userMessage)
+                        ))
                 )
         );
 
