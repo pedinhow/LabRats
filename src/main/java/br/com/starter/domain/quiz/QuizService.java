@@ -31,7 +31,7 @@ public class QuizService {
         }
 
         Quiz quiz = quizGeneratorClient.generateFromText(baseText.trim());
-        quiz.setTitle(buildDefaultTitle(baseText));
+        //quiz.setTitle(buildDefaultTitle(baseText));
         quiz.setCreator(creator);
 
         return quizRepository.save(quiz);

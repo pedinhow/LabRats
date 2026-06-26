@@ -36,7 +36,7 @@ public class OpenRouterQuizClient implements QuizGeneratorClient {
             Retorne somente JSON valido, sem markdown, sem explicacoes e sem texto antes ou depois.
             Use exatamente este formato:
             {
-              "title": "Quiz gerado",
+              "title": "Titulo descritivo sobre o tema do conteudo (maximo 4 palavras, sem aspas, sem prefixo Quiz)",
               "questions": [
                 {
                   "statement": "Pergunta",
